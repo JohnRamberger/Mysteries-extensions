@@ -2,10 +2,44 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: libs.plugins.ktlint.get().pluginId
 
+ext.loadEnv = {
+    def file = rootDir.toPath().resolve(".env").toFile()
+
+    def envMap = [:]
+
+    if (!file.exists()) {
+        return envMap
+    }
+
+    println("Loading environment from ${file.path}")
+
+    file.readLines().each() {
+        if (!it.isEmpty() && !it.startsWith("#")) {
+            def (key, value) = it.tokenize('=')
+            envMap[key] = value
+        }
+    }
+
+    println("Loaded environment with length ${envMap.size()}")
+
+    return envMap
+}
+
+ext.getEnv = { key ->
+    return System.getenv(key) ?: env[key]
+}
+
 ext {
     language = project.parent.name
     source = project.name
+
+    env = loadEnv()
 }
+
+assert !ext.has("pkgNameSuffix")
+assert !ext.has("libVersion")
+
+assert sourceName.chars().max().asInt < 0x180 : "Extension name should be romanized"
 
 android {
     namespace = "com.jramberger.mysteries.extension"
@@ -44,9 +78,9 @@ android {
     signingConfigs {
         release {
             storeFile rootProject.file("signingkey.jks")
-            storePassword System.getenv("KEY_STORE_PASSWORD")
-            keyAlias System.getenv("ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
+            storePassword getEnv("KEY_STORE_PASSWORD")
+            keyAlias getEnv("ALIAS")
+            keyPassword getEnv("KEY_PASSWORD")
         }
     }
 
@@ -55,10 +89,6 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             vcsInfo.include false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 
@@ -68,6 +98,10 @@ android {
 
     buildFeatures {
         buildConfig true
+    }
+
+    packaging {
+        resources.excludes.add("kotlin-tooling-metadata.json")
     }
 
     compileOptions {
@@ -89,6 +123,8 @@ tasks.register("writeManifestFile") {
     doLast {
         def manifest = android.sourceSets.getByName("main").manifest
         if (!manifest.srcFile.exists()) {
+            // make build directory if it doesn't exist
+            layout.buildDirectory.get().getAsFile().mkdirs()
             File tempFile = layout.buildDirectory.get().file("tempAndroidManifest.xml").getAsFile()
             if (!tempFile.exists()) {
                 tempFile.withWriter {

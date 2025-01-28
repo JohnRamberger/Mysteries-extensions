@@ -17,3 +17,5 @@ local.properties
 .kotlin/
 # ignore any build folder in the project and subprojects
 **/build/
+.env
+*.jks
