@@ -13,6 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-**/build/**
 .idea/
 .kotlin/
+# ignore any build folder in the project and subprojects
+**/build/

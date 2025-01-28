@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="mysteries.extension" />
+
+    <application android:icon="@mipmap/ic_launcher" android:allowBackup="false" android:label="${appName}">
+
+        <meta-data android:name="mysteries.extension.class" android:value="${extClass}" />
+
+    </application>
+
+</manifest>
