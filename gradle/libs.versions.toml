@@ -2,6 +2,7 @@
 agp = "8.6.1"
 kotlin = "2.1.0"
 ktlint = "12.1.1"
+mysteries-extension-core = "88ead3d"
 
 [libraries]
 # Gradle
@@ -10,7 +11,7 @@ gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "ag
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 
-mysteries-extension-core = { group = "com.github.JohnRamberger", name = "Mysteries-extension-core", version = "7649b47" }
+mysteries-extension-core = { group = "com.github.JohnRamberger", name = "Mysteries-extension-core", version.ref = "mysteries-extension-core" }
 
 java-dotenv = { group = "io.github.cdimascio", name = "java-dotenv", version = "5.2.2" }
 
