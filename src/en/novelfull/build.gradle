@@ -1,7 +1,7 @@
 ext {
     sourceName = "NovelFull"
     sourceClass = ".NovelFull"
-    sourceVersionCode = 1
+    sourceVersionCode = 2
 }
 
 apply from: "$rootDir/common.gradle"

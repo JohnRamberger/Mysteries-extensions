@@ -2,18 +2,26 @@
 agp = "8.6.1"
 kotlin = "2.1.0"
 ktlint = "12.1.1"
-mysteries-extension-core = "88ead3d"
+mysteries-extension-core = "cb095ed"
+kotlin-coroutines = "1.10.1"
+okhttp = "4.12.0"
+jsoup = "1.18.3"
+timber = "5.0.1"
 
 [libraries]
 # Gradle
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
-
 mysteries-extension-core = { group = "com.github.JohnRamberger", name = "Mysteries-extension-core", version.ref = "mysteries-extension-core" }
 
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 java-dotenv = { group = "io.github.cdimascio", name = "java-dotenv", version = "5.2.2" }
+
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 [plugins]
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
@@ -24,5 +32,9 @@ all = [
     "gradle",
     "kotlin-stdlib",
     "mysteries-extension-core",
-    "java-dotenv"
+    "java-dotenv",
+    "kotlinx-coroutines-core",
+    "okhttp",
+    "jsoup",
+    "timber",
 ]
