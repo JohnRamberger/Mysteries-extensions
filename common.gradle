@@ -1,3 +1,5 @@
+import groovy.json.JsonBuilder
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: libs.plugins.ktlint.get().pluginId
@@ -33,6 +35,11 @@ ext {
     language = project.parent.name
     source = project.name
 
+    versionCode = sourceVersionCode
+    versionName = "1.0.$versionCode"
+
+    apkName = "mysteries-ext-$language-$source-$versionName"
+
     env = loadEnv()
 }
 
@@ -58,13 +65,13 @@ android {
         minSdk = 21
         consumerProguardFiles("consumer-rules.pro")
 
-        versionCode sourceVersionCode
-        versionName "1.0.$versionCode"
+        versionCode versionCode
+        versionName versionName
 
         applicationIdSuffix language + "." + source
 
         base {
-            archivesName = "mysteries-ext-$language-$source-$versionName"
+            archivesName = apkName
         }
 
         assert sourceClass.startsWith(".")
@@ -136,4 +143,27 @@ tasks.register("writeManifestFile") {
     }
 }
 
-preBuild.dependsOn(writeManifestFile)
+tasks.register("writeExtManifestFile") {
+    doLast {
+        def manifest = getLayout().buildDirectory.file("extension-manifest.json").get().getAsFile()
+
+        def manifestContent = [
+            "name": sourceName,
+            "version": versionName,
+            "language": language,
+            "source": source,
+            "class": sourceClass,
+            "package": android.defaultConfig.applicationId,
+            "apkName": "${apkName}.apk",
+            "versionCode": versionCode,
+        ]
+
+        manifestContent.each { key, value ->
+            manifestContent[key] = value.toString()
+        }
+
+        manifest.text = new JsonBuilder(manifestContent).toPrettyString()
+    }
+}
+
+preBuild.dependsOn(writeManifestFile, writeExtManifestFile)
