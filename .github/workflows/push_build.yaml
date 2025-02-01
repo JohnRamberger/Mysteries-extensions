@@ -1,0 +1,50 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # - name: Set up JDK 17
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'adopt'
+      #     java-version: '17'
+
+      - name: Run getModifiedPackages.sh
+        id: getModifiedPackages
+        run: |
+          chmod +x ./scripts/getModifiedPackages.sh
+          tasks=$(./scripts/getModifiedPackages.sh)
+          echo "tasks=$tasks" >> $GITHUB_ENV
+
+  execute-tasks:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: ${{ steps.getModifiedPackages.outputs.tasks }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Execute Gradle task
+        run: ./gradlew ${{ matrix.task }}
