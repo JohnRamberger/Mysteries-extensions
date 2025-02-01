@@ -42,11 +42,18 @@ class NovelFull : NovelSource {
 
         val document = response.asJsoup()
 
-        return document.select("div.row").map { row ->
+        return document.select("div.list:not(.list-side):not(.list-cat) > div.row").map { row ->
             NovelMetadata(
                 id = row.selectFirst("h3.truyen-title > a")?.attr("href") ?: "",
                 title = row.selectFirst("h3.truyen-title")?.text() ?: "",
-                coverUrl = row.selectFirst("img.cover")?.attr("src"),
+                coverUrl =
+                    row.selectFirst("img.cover")?.attr("src")?.let {
+                        if (it.startsWith("/")) {
+                            baseUrl + it
+                        } else {
+                            it
+                        }
+                    },
             )
         }
     }
